@@ -110,7 +110,8 @@ function Deploy-Environment {
       --location $location `
       --sku Standard_LRS `
       --kind StorageV2 `
-      --https-only true
+      --https-only true `
+      --min-tls-version TLS1_2
 
     # Create container registry
     Write-Host "`nCreating container registry..." -ForegroundColor Cyan
@@ -196,7 +197,8 @@ function Deploy-Environment {
       --location $location `
       --sku Standard_LRS `
       --kind StorageV2 `
-      --https-only true
+      --https-only true `
+      --min-tls-version TLS1_2
 
     # Create container for Terraform state
     az storage container create `

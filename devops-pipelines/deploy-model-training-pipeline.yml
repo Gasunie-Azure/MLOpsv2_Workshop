@@ -4,6 +4,9 @@
 name: deploy-model-training-pipeline
 
 variables: #To be updated 
+  - ${{ if eq(variables['Build.SourceBranchName'], 'dev') }}:
+      - template: ../config-infra-dev.yml
+      - group: DevVars
   - ${{ if eq(variables['Build.SourceBranchName'], 'prod') }}:
       - template: ../config-infra-prod.yml
       - group: ProdVars
@@ -11,11 +14,9 @@ variables: #To be updated
       - template: ../config-infra-prod.yml
       - group: ProdVars
 
-
 pool:
-  name: Self-hosted Agents
-  vmImage: windows-latest
-
+  name: Default
+  vmImage: ubuntu-latest
 
 stages:
   - stage: DeployTrainingPipeline

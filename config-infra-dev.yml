@@ -7,16 +7,16 @@ variables:
   # Global
   ap_vm_image: ubuntu-20.04
 
-  namespace: gasunimlopsv2  
-  location: eastus
+  namespace: gasuniemlopsv2  
+  location: germanywestcentral
   environment: dev
   enable_aml_computecluster: true
   enable_monitoring: false
-  random_suffix: 8a6
+  random_suffix: 3b9
 
   # Azure DevOps
-  ado_service_connection_rg: gasuni-mlopsv2-rg-sc-dev
-  ado_service_connection_aml_ws: gasuni-mlopsv2-aml-sc-dev
+  ado_service_connection_rg: gasunie-mlopsv2-rg-sc-dev
+  ado_service_connection_aml_ws: gasunie-mlopsv2-aml-sc-dev
 
   # DO NOT TOUCH
 
