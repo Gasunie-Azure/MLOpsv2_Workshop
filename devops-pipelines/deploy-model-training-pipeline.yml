@@ -15,8 +15,7 @@ variables: #To be updated
       - group: ProdVars
 
 pool:
-  name: Default
-  vmImage: ubuntu-latest
+  name: vmss-prd-windows-2022
 
 stages:
   - stage: DeployTrainingPipeline
