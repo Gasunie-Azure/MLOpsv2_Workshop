@@ -4,16 +4,11 @@
 name: deploy-model-training-pipeline
 
 variables: #To be updated 
-  - ${{ if eq(variables['Build.SourceBranchName'], 'daan') }}:
-      - template: ../config-infra-dev.yml
-      - group: DevVars
-  - ${{ if ne(variables['Build.SourceBranchName'], 'prod') }}:
-      - template: ../config-infra-prod.yml
-      - group: ProdVars
-
+    - template: ../config-infra-dev.yml
+    - group: DevVars
 
 pool:
-  name: Self-hosted Agents
+  name: vmss-prd-windows-2022
   vmImage: windows-latest
 
 
