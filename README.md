@@ -58,26 +58,29 @@ This project demonstrates an end-to-end MLOps implementation using Azure Machine
 
 In this workshop, we provided both CLI and SDK exercise. You can choose your preferred option. The exercise starts from ml-pipeline folder. 
 
-There are 2 labs in this workshop:
+There are 3 labs in this workshop, with an optional lab4:
 
 ## Lab 1. Building a training pipeline. It can be a custom model pipeline or automl pipeline.
   - Experiment with notebooks in `notebooks` folder to explore data and model 
+  - Update .env.sample and fill the respective subscription, resource group and workspace values. Rename file to .env. 
   - Build pipeline by navigating to `ml-pipelines` and run ml-pipelines\sdk\train-sdkv2.ipynb
   - Review components of the pipeline and fill in missing parts and references 
   - Once pipeline is run, Model will be trained and registered in the WS registry
 
-## Lab 2. Building a deployment pipeline, it could either a online endpoint or batch online. 
+## Lab 2. Building a deployment pipeline, it could either be an online endpoint or batch endpoint. 
   - Deploy Model by navigating to `ml-pipelines` and running corresponding notebooks for batch deployment ml-pipelines\sdk\deploy-batch-endpoint-sdkv2.ipynb or online deployment ml-pipelines\sdk\deploy-online-endpoint-sdkv2.ipynb
 
 ## Lab 3. CICD
 
-The following steps show how to run the model training and deployment pipeline via Azure devops pipelines using Azure ML Cli extension. For simulating the same flow with  SDKv2, we jump to step 3.b.
+The following steps show how to run the model training and deployment pipeline via Azure devops pipelines using Azure ML Cli extension. For simulating the same flow with  SDKv2, we jump to step 3.2.
 
-#### 3.a1 Set up Azure DevOps Repository
+#### 3.1a Set up Azure DevOps Repository
 
-1. Create an organization in Azure DevOps and add a project
-2. Initialize a Git repository and clone it to your local machine
-3. Add this code to your repository:
+1. Verify/Update the resource names, service connection names in ./config-infra-dev.yml and ./config-infra-prod.yml files.
+2. Provide a unique <batch-endpoint-name> in ml-pipelines/cli/deploy/batch/batch-deployment.yml and ml-pipelines/cli/deploy/batch/batch-endpoint.yml
+3. Create an organization(if not already there) in Azure DevOps and add a project
+4. Initialize a Git repository and clone it to your local machine
+5. Add this code to your repository:
 
 ```powershell
 # Initialize git repository (if not already done)
@@ -93,14 +96,14 @@ git remote add origin <your-repository-url>   OR
 git remote set-url origin <your-repository-url>
 git push -u origin dev
 ```
-#### 3.a2 Set up Variable Groups
+#### 3.1b Set up Variable Groups
 In Azure DevOps , Within **Project** Go to Library inside Pipelines. Create variable groups DevVars and ProdVars with the following variables:
 - resource_group
 - workspace_name
   
 ![image](https://github.com/user-attachments/assets/8d48f94c-2f3c-48cb-9668-b9b6284cc20b)
 
-#### 3.a3 Create Azure DevOps Pipelines
+#### 3.1c Create Azure DevOps Pipelines
 To set up the CI/CD pipelines in Azure DevOps:
 1. In Azure DevOps, navigate to **Pipelines** in the left sidebar
 2. Click on **New pipeline**
@@ -111,14 +114,13 @@ To set up the CI/CD pipelines in Azure DevOps:
 7. In the path dropdown, select one of the following pipeline files:
    - `/devops-pipelines/deploy-model-training-pipeline.yml` (for model training)
    - `/devops-pipelines/deploy-batch-endpoint-pipeline.yml` (for batch endpoint)
-   - `/devops-pipelines/deploy-online-endpoint-pipeline.yml` (for online endpoint)
 8. Click **Continue**
-9. Review the pipeline YAML file
+9. Review the pipeline YAML file. Check the agent-pool name and update as needed .
 10. Click **Run** to save and run the pipeline, or **Save** to just save it
 Repeat these steps for each pipeline you want to create. You'll typically want to set up the model training pipeline first, followed by the endpoint deployment pipelines.
 
 
-#### 3.b Deploying via the SDKv2
+#### 3.2 Deploying via the SDKv2
 1. We don't have a devops-pipeline yml created for this workshop ; but it can be easily created by modifying the yml and adding a python or powershell task to run the python script ml-pipelines/sdk/run_pipeline.py
 2. You can test it locally by running the following command from your VS code powershell terminal.
 ```
@@ -147,6 +149,37 @@ python ml-pipelines/sdk/run_pipeline.py `
 
 
 
+## Lab 4. MLOPS with Azure Machine learning registries
+ 
+4.1 Cross-workspace MLOps with registries
+![s](imgs/registry.png)
+ 
+1.  Clone the Example Repo
+ 
+          git clone https://github.com/Azure/azureml-examples.git
+ 
+          cd azureml-examples/sdk/python/assets/assets-in-registry
+ 
+2.  Create a Registry:
+ 
+- Please follow these steps to create a registry :- https://learn.microsoft.com/en-us/azure/machine-learning/how-to-manage-registries?view=azureml-api-2&tabs=cli
+ 
+3. Register Data & Models:
+   Register your data assets and models in the registry (not just in a workspace).
+ 
+- See Share data using registry example :- https://github.com/Azure/azureml-examples/blob/main/sdk/python/assets/assets-in-registry/share-data-using-registry.ipynb
+ 
+- See Share models/components example :- https://github.com/Azure/azureml-examples/blob/main/sdk/python/assets/assets-in-registry/share-models-components-environments.ipynb
+
+
+
+## Contributors
+
+Shenglin Xu
+
+Heena Refai
+
+Sanskriti Vagrecha
 
 
 

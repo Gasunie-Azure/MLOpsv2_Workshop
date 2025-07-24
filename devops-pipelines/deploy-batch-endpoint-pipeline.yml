@@ -3,73 +3,105 @@
 
 name: deploy-batch-endpoint-pipeline
 
-variables:
-  - ${{ if eq(variables['Build.SourceBranchName'], 'main') }}:
-      # 'main' branch: PRD environment
-      - template: ../../config-infra-prod.yml
-  - ${{ if ne(variables['Build.SourceBranchName'], 'main') }}:
-      # 'develop' or feature branches: DEV environment
-      - template: ../../config-infra-dev.yml
-  - name: version
-    value: python-sdk-v2
-  - name: endpoint_name
-    value: taxi-batch-$(namespace)$(postfix)$(environment)
+variables: #To be updated 
+  - ${{ if eq(variables['Build.SourceBranchName'], 'dev') }}:
+      - template: ../config-infra-dev.yml
+      - group: DevVars
+  - ${{ if ne(variables['Build.SourceBranchName'], 'prod') }}:
+      - template: ../config-infra-prod.yml
+      - group: ProdVars
 
-trigger: none
 
 pool:
   name: Self-hosted Agents
-  vmImage: ubuntu-20.04
+  vmImage: windows-latest
 
-resources:
-  repositories:
-    - repository: mlops-templates # Template Repo
-      name: mlops-templates
-      type: git
-      ref: main
 
 stages:
-  - stage: CreateBatchEndpoint
-    displayName: Create/Update Batch Endpoint
+  - stage: DeployBatchEndpointPipeline
+    displayName: Deploy Batch Endpoint Pipeline
     jobs:
       - job: DeployBatchEndpoint
+        timeoutInMinutes: 120
         steps:
+          # 1. checkout your repo
           - checkout: self
-            path: s/
-          - task: Bash@3
-            displayName: "Create checkout repository folder(s)"
+    
+                
+          # 2. Install Azure ML extension
+          - task: AzureCLI@2
+            displayName: 'Install Azure ML Extension'
             inputs:
-              targetType: "inline"
-              script: |
-                set -e
-                mkdir "$(Build.Repository.Name)"
-                mkdir "mlops-templates"
-          - checkout: mlops-templates
-            path: s/templates/
-          - template: templates/aml-cli-v2/install-az-cli.yml@mlops-templates
-          - template: templates/aml-cli-v2/install-aml-cli.yml@mlops-templates
-          - template: templates/aml-cli-v2/connect-to-workspace.yml@mlops-templates
-          - template: templates/aml-cli-v2/create-compute.yml@mlops-templates
-            parameters:
-              cluster_name: batch-cluster # name must match cluster name in deployment file below
-              size: STANDARD_DS3_V2
-              min_instances: 0
-              max_instances: 5
-              cluster_tier: dedicated
-          - template: templates/${{ variables.version }}/create-batch-endpoint.yml@mlops-templates
-            parameters:
-              endpoint_name: "${{ variables.endpoint_name }}"
-              endpoint_description: "Taxi batch endpoint"
-              auth_mode: "aad_token"
-          - template: templates/${{ variables.version }}/create-batch-deployment.yml@mlops-templates
-            parameters:
-              deployment_name: taxi-batch-dp
-              deployment_description: "Taxi batch deployment"
-              endpoint_name: "${{ variables.endpoint_name }}"
-              model_path: "taxi-model@latest"
-              compute: batch-cluster
-          - template: templates/${{ variables.version }}/test-batch-endpoint.yml@mlops-templates
-            parameters:
-              endpoint_name: "${{ variables.endpoint_name }}"
-              sample_request: data/taxi-batch.csv
-              request_type: uri_file #either uri_folder or uri_file
+              azureSubscription: $(ado_service_connection_aml_ws)
+              scriptType: ps
+              scriptLocation: inlineScript
+              inlineScript: |
+                Write-Host "Installing Azure ML CLI extension... $(ado_service_connection_aml_ws)"
+                az extension add --name ml --yes
+                az extension list
+
+          # 3. authenticate & “attach” the AML workspace
+          - task: AzureCLI@2
+            displayName: 'Configure AML workspace'
+            inputs:
+              azureSubscription: $(ado_service_connection_aml_ws)
+              scriptType: ps
+              scriptLocation: inlineScript
+              inlineScript: |
+                Write-Host "Configuring AML workspace: $(aml_workspace) in resource group: $(resource_group)"
+                $subscription_id = az account show --query id -o tsv
+                Write-Host "##vso[task.setvariable variable=AZURE_SUBSCRIPTION_ID]$subscription_id"
+                Write-Host "##vso[task.setvariable variable=AZURE_RESOURCE_GROUP]$(resource_group)"
+                Write-Host "##vso[task.setvariable variable=AZURE_ML_WORKSPACE]$(aml_workspace)"
+                Write-Host "Azure ML environment variables set"
+
+          #4. create or validate compute
+          - task: AzureCLI@2
+            displayName: 'Ensure AML batch cluster'
+            inputs:
+              azureSubscription: $(ado_service_connection_aml_ws)
+              scriptType: ps
+              scriptLocation: inlineScript
+              inlineScript: |
+                Write-Host "Checking for batch cluster 'batch-cluster'..."
+                $exists = $false
+                try {
+                  if (az ml compute show --name batch-cluster --resource-group "$(resource_group)" --workspace-name "$(aml_workspace)" 2>$null) {
+                    Write-Host "Batch cluster exists"
+                    $exists = $true
+                  }
+                } catch { }
+                if (-not $exists) {
+                  Write-Host "Creating batch cluster 'batch-cluster'..."
+                  # Create batch cluster
+                  az ml compute create --name batch-cluster --type amlcompute --size Standard_DS3_v2 --min-instances 0 --max-instances 5 --tier dedicated --resource-group "$(resource_group)" --workspace-name "$(aml_workspace)"
+                }
+              workingDirectory: 'ml-pipelines/cli'
+
+          # 5. Create or update the Batch Endpoint
+          - task: AzureCLI@2
+            displayName: 'Create or update Batch Endpoint'
+            inputs:
+              azureSubscription: $(ado_service_connection_aml_ws)
+              scriptType: ps
+              scriptLocation: inlineScript
+              inlineScript: |
+                Write-Host "Creating Batch Endpoint..."
+                az ml batch-endpoint create --file deploy/batch/batch-endpoint.yml --resource-group "$(resource_group)" --workspace-name "$(aml_workspace)"
+                Write-Host "Batch Endpoint created."
+              workingDirectory: 'ml-pipelines/cli'
+                
+          # 6. Create Batch Deployment
+          - task: AzureCLI@2
+            displayName: 'Create Batch Deployment'
+            inputs:
+              azureSubscription: $(ado_service_connection_aml_ws)
+              scriptType: ps
+              scriptLocation: inlineScript
+              inlineScript: |
+                Write-Host "Creating Batch deployment"
+                az ml batch-deployment create --file deploy/batch/batch-deployment.yml --set-default --resource-group "$(resource_group)" --workspace-name "$(aml_workspace)
+              workingDirectory: 'ml-pipelines/cli'
+
+
+         
