@@ -3,13 +3,11 @@
 
 name: deploy-batch-endpoint-pipeline
 
+trigger: none
+
 variables: #To be updated 
-  - ${{ if eq(variables['Build.SourceBranchName'], 'dev') }}:
-      - template: ../config-infra-dev.yml
-      - group: DevVars
-  - ${{ if ne(variables['Build.SourceBranchName'], 'prod') }}:
-      - template: ../config-infra-prod.yml
-      - group: ProdVars
+    - template: ../config-infra-prod.yml
+    - group: ProdVars
 
 
 pool:
@@ -100,7 +98,7 @@ stages:
               scriptLocation: inlineScript
               inlineScript: |
                 Write-Host "Creating Batch deployment"
-                az ml batch-deployment create --file deploy/batch/batch-deployment.yml --set-default --resource-group "$(resource_group)" --workspace-name "$(aml_workspace)
+                az ml batch-deployment create --file deploy/batch/batch-deployment.yml --set-default --resource-group "$(resource_group)" --workspace-name "$(aml_workspace)"
               workingDirectory: 'ml-pipelines/cli'
 
 
