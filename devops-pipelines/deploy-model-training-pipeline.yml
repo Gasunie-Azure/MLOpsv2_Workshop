@@ -4,7 +4,7 @@
 name: deploy-model-training-pipeline
 
 variables: #To be updated 
-  - ${{ if eq(variables['Build.SourceBranchName'], 'dev') }}:
+  - ${{ if eq(variables['Build.SourceBranchName'], 'daan') }}:
       - template: ../config-infra-dev.yml
       - group: DevVars
   - ${{ if ne(variables['Build.SourceBranchName'], 'prod') }}:
@@ -63,16 +63,16 @@ stages:
               scriptType: ps
               scriptLocation: inlineScript
               inlineScript: |
-                Write-Host "Checking for compute cluster 'cpu-cluster'..."
+                Write-Host "Checking for compute cluster 'cpu-cluster2'..."
                 $exists = $false
                 try {
-                  if (az ml compute show --name cpu-cluster --resource-group "$(resource_group)" --workspace-name "$(aml_workspace)" 2>$null) {
+                  if (az ml compute show --name cpu-cluster2 --resource-group "$(resource_group)" --workspace-name "$(aml_workspace)" 2>$null) {
                     Write-Host "Compute cluster exists"
                     $exists = $true
                   }
                 } catch { }
                 if (-not $exists) {
-                  Write-Host "Creating compute cluster 'cpu-cluster'..."
+                  Write-Host "Creating compute cluster 'cpu-cluster2'..."
                   # Create train job compute cluster
                   az ml compute create --file train/compute.yml --resource-group "$(resource_group)" --workspace-name "$(aml_workspace)"
                 }
