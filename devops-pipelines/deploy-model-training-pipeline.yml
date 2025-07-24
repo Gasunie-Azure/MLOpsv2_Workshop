@@ -3,6 +3,8 @@
 
 name: deploy-model-training-pipeline
 
+trigger: none
+
 variables: #To be updated
   - template: ../config-infra-dev.yml
   - group: DevVars
