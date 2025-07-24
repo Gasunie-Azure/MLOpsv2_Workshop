@@ -3,13 +3,11 @@
 
 name: deploy-model-training-pipeline
 
+trigger: none
+
 variables: #To be updated 
-  - ${{ if eq(variables['Build.SourceBranchName'], 'feature/ninke') }}:
-      - template: ../config-infra-dev.yml
-      - group: DevVars
-  - ${{ if ne(variables['Build.SourceBranchName'], 'feature/ninke') }}:
-      - template: ../config-infra-prod.yml
-      - group: ProdVars
+  - template: ../config-infra-dev.yml
+  - group: DevVars
 
 
 pool:
