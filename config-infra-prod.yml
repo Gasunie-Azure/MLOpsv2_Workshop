@@ -6,7 +6,7 @@ variables:
   # Global
   ap_vm_image: ubuntu-20.04
 
-  namespace: gasunimlopsv2 
+  namespace: gasuniemlopsv2
   location: westeurope
   environment: prod
   enable_aml_computecluster: true
