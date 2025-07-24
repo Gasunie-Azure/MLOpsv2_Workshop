@@ -4,9 +4,8 @@
 name: deploy-model-training-pipeline
 
 variables: #To be updated 
-  - ${{ if eq(variables['Build.SourceBranchName'], 'feature/paul-k-ML') }}:
-      - template: ../config-infra-dev.yml
-      - group: DevVars
+  - template: ../config-infra-dev.yml
+  - group: DevVars
 
 
 pool:

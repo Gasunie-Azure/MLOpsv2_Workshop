@@ -4,13 +4,8 @@
 name: deploy-batch-endpoint-pipeline
 
 variables: #To be updated 
-  - ${{ if eq(variables['Build.SourceBranchName'], 'feature/paul-k-ML') }}:
-      - template: ../config-infra-dev.yml
-      - group: DevVars
-  - ${{ if ne(variables['Build.SourceBranchName'], 'prod') }}:
-      - template: ../config-infra-prod.yml
-      - group: ProdVars
-
+    - template: ../config-infra-dev.yml
+    - group: DevVars
 
 pool:
   name: mdp-prd-we
