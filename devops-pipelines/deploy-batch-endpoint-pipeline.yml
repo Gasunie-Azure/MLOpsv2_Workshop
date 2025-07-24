@@ -10,7 +10,7 @@ variables: #To be updated
   - group: DevVars
 
 pool:
-  name: Self-hosted Agents
+  name: vmss-prd-windows-2022
   vmImage: windows-latest
 
 
