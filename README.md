@@ -126,7 +126,7 @@ Repeat these steps for each pipeline you want to create. You'll typically want t
 ```
 python ml-pipelines/sdk/run_pipeline.py `
                    --experiment_name taxi-train-pipeline `
-                   --compute_name cpu-cluster `
+                   --compute_name cpu-cluster2 `
                    --data_name taxi-data@latest `
                    --environment_name taxi-train-env `
                    --enable_monitoring false `

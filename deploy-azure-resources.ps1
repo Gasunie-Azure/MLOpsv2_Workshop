@@ -157,7 +157,7 @@ function Deploy-Environment {
     # Create compute cluster
     Write-Host "`nCreating compute cluster..." -ForegroundColor Cyan
     az ml compute create `
-      --name cpu-cluster `
+      --name cpu-cluster2 `
       --type amlcompute `
       --size Standard_DS3_v2 `
       --min-instances 0 `
@@ -229,7 +229,7 @@ function Deploy-Environment {
     Write-Host "  Container Registry:  $containerRegistry" -ForegroundColor Yellow
     Write-Host "  Storage Account:     $storageAccount" -ForegroundColor Yellow
     Write-Host "  App Insights:        $appInsights" -ForegroundColor Yellow
-    Write-Host "  Compute Clusters:    cpu-cluster, batch-cluster" -ForegroundColor Yellow
+    Write-Host "  Compute Clusters:    cpu-cluster2, batch-cluster" -ForegroundColor Yellow
 }
 
 # -----------------------------------------------------------------------------
