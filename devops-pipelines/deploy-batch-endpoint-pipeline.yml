@@ -13,8 +13,7 @@ variables: #To be updated
 
 
 pool:
-  name: Self-hosted Agents
-  vmImage: windows-latest
+  name: mdp-prd-we
 
 
 stages:
