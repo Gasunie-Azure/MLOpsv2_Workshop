@@ -28,11 +28,11 @@ stages:
           - task: AzureCLI@2
             displayName: 'Install Azure ML Extension'
             inputs:
-              azureSubscription: $(ado_service_connection_aml_ws)
+              azureSubscription: sc-su-gu-sbx-ms-aml-ws
               scriptType: ps
               scriptLocation: inlineScript
               inlineScript: |
-                Write-Host "Installing Azure ML CLI extension... $(ado_service_connection_aml_ws)"
+                Write-Host "Installing Azure ML CLI extension... sc-su-gu-sbx-ms-aml-ws"
                 az extension add --name ml --yes
                 az extension list
 
@@ -40,7 +40,7 @@ stages:
           - task: AzureCLI@2
             displayName: 'Configure AML workspace'
             inputs:
-              azureSubscription: $(ado_service_connection_aml_ws)
+              azureSubscription: sc-su-gu-sbx-ms-aml-ws
               scriptType: ps
               scriptLocation: inlineScript
               inlineScript: |
@@ -55,7 +55,7 @@ stages:
           - task: AzureCLI@2
             displayName: 'Ensure AML compute cluster'
             inputs:
-              azureSubscription: $(ado_service_connection_aml_ws)
+              azureSubscription: sc-su-gu-sbx-ms-aml-ws
               scriptType: ps
               scriptLocation: inlineScript
               inlineScript: |
@@ -78,7 +78,7 @@ stages:
           - task: AzureCLI@2
             displayName: 'Register (or bump) training environment'
             inputs:
-              azureSubscription: $(ado_service_connection_aml_ws)
+              azureSubscription: sc-su-gu-sbx-ms-aml-ws
               scriptType: ps
               scriptLocation: inlineScript
               inlineScript: |
@@ -92,7 +92,7 @@ stages:
           - task: AzureCLI@2
             displayName: 'Register data asset'
             inputs:
-              azureSubscription: $(ado_service_connection_aml_ws)
+              azureSubscription: sc-su-gu-sbx-ms-aml-ws
               scriptType: ps
               scriptLocation: inlineScript
               inlineScript: |
@@ -104,7 +104,7 @@ stages:
           - task: AzureCLI@2
             displayName: 'Run training pipeline'
             inputs:
-              azureSubscription: $(ado_service_connection_aml_ws)
+              azureSubscription: sc-su-gu-sbx-ms-aml-ws
               scriptType: ps
               scriptLocation: inlineScript
               inlineScript: |
