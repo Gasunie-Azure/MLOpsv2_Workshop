@@ -1,6 +1,6 @@
 $schema: https://azuremlschemas.azureedge.net/latest/batchDeployment.schema.json
 name: taxi-batch-dp
-endpoint_name: batch-endpoint-lucas
+endpoint_name: taxi-online-endpoint-3027
 model: azureml:taxi-model@latest
 compute: azureml:batch-cluster
 resources:
