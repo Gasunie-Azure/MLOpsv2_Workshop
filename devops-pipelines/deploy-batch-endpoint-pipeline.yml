@@ -8,8 +8,6 @@ variables: #To be updated
       - template: ../config-infra-dev.yml
       - group: DevVars
   
-
-
 pool:
   name: vmss-prd-windows-2022
   vmImage: windows-latest
