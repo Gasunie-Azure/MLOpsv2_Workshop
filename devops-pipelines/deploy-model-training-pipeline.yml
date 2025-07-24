@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 
 name: deploy-model-training-pipeline
-
+trigger: none
 variables: #To be updated 
   - ${{ if eq(variables['Build.SourceBranchName'], 'feature/lucas') }}:
       - template: ../config-infra-dev.yml

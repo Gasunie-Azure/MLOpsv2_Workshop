@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 
 name: deploy-batch-endpoint-pipeline
-
+trigger: none
 variables: #To be updated 
   - ${{ if eq(variables['Build.SourceBranchName'], 'dev') }}:
       - template: ../config-infra-dev.yml
