@@ -1,6 +1,6 @@
 $schema: https://azuremlschemas.azureedge.net/latest/batchDeployment.schema.json
-name: Jasper-taxi-batch-dp
-endpoint_name: <batch-endpoint-name>
+name: taxi-batch-dp
+endpoint_name: JasperEndpoint
 model: azureml:taxi-model@latest
 compute: azureml:batch-cluster
 resources:
