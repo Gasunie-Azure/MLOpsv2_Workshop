@@ -13,10 +13,11 @@ variables:
   enable_aml_computecluster: true
   enable_monitoring: false
   random_suffix: 8a6
-
+ 
   # Azure DevOps
-  ado_service_connection_rg: gasuni-mlopsv2-rg-sc-dev
-  ado_service_connection_aml_ws: gasuni-mlopsv2-aml-sc-dev
+  ado_service_connection_rg: sc-su-gu-sbx-ms-aml-ws
+  ado_service_connection_aml_ws: sc-su-gu-sbx-ms-aml-ws
+ 
 
   # DO NOT TOUCH
 
