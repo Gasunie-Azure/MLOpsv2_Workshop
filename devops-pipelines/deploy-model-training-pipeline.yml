@@ -3,7 +3,7 @@
 
 trigger: none
 
-name: deploy-model-training-pipeline
+name: deploy-model-training-pipeline-Thijs
 
 variables: #To be updated
   - template: ../config-infra-dev.yml
