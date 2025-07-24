@@ -1,19 +1,22 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-
+trigger: none
 name: deploy-batch-endpoint-pipeline
 
 variables: #To be updated 
   - ${{ if eq(variables['Build.SourceBranchName'], 'dev') }}:
       - template: ../config-infra-dev.yml
       - group: DevVars
+  - ${{ if eq(variables['Build.SourceBranchName'], 'jits') }}:
+    - template: ../config-infra-dev.yml
+    - group: DevVars
   - ${{ if ne(variables['Build.SourceBranchName'], 'prod') }}:
       - template: ../config-infra-prod.yml
       - group: ProdVars
 
 
 pool:
-  name: Self-hosted Agents
+  name: vmss-prd-windows-2022
   vmImage: windows-latest
 
 
@@ -100,7 +103,7 @@ stages:
               scriptLocation: inlineScript
               inlineScript: |
                 Write-Host "Creating Batch deployment"
-                az ml batch-deployment create --file deploy/batch/batch-deployment.yml --set-default --resource-group "$(resource_group)" --workspace-name "$(aml_workspace)
+                az ml batch-deployment create --file deploy/batch/batch-deployment.yml --set-default --resource-group "$(resource_group)" --workspace-name "$(aml_workspace)"
               workingDirectory: 'ml-pipelines/cli'
 
 
